@@ -1,0 +1,48 @@
+/*!
+ * jQuery RadiantScroller
+ * Version: 0.0.1 (07/01/2014)
+ * Copyright (c) 2013 Ilya Bodrov (http://radiant-wind.com)
+ */
+
+/* ======== Scroller and elements ======== */
+.radiant_scroller {
+    position: relative;
+}
+
+.radiant_scroller_wrapper {
+    overflow: hidden;
+}
+
+.radiant_scroller_wrapper .scroller-el {
+    display: block;
+    float: left;
+}
+
+.radiant_scroller .radiant_scroller_row .scroller-el:last-of-type {
+    margin-right: 0;
+}
+
+.radiant_scroller .radiant_scroller_row:last-of-type .scroller-el {
+    margin-bottom: 0;
+}
+
+/* ======== Navigatonal buttons (previous/next) ======== */
+.radiant_scroller .radiant-navigation {
+    clear: both;
+}
+
+.radiant_scroller .radiant-next, .radiant_scroller .radiant-prev {
+    position: absolute;
+    cursor: pointer;
+}
+
+/* ======== Pagination ======== */
+.radiant_scroller .radiant-pagination .radiant-page {
+    display: inline-block;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.radiant_scroller .radiant-pagination .radiant-page:last-of-type {
+    margin-right: 0;
+}
