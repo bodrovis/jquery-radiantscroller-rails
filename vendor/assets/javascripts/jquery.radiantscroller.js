@@ -1,6 +1,6 @@
 /*!
  * jQuery RadiantScroller
- * Version: 0.0.2 (07/01/2014)
+ * Version: 0.0.3 (07/01/2014)
  * Copyright (c) 2013 Ilya Bodrov (http://www.radiant-wind.com/plugins/radiant_scroller)
  *
  * Requires: jQuery 1.7.0+
@@ -20,8 +20,7 @@
         var elements = scroller.find('.scroller-el'),
             el_count = elements.size(),
             el_width = scroller.vars.elementWidth + scroller.vars.elementMargin,
-            per_row = Math.ceil(el_count / scroller.vars.rows),
-            visible_els = 0;
+            per_row = Math.ceil(el_count / scroller.vars.rows);
 
         // Calculating scroller's width with regard to items per row
         scroller.width( (el_width * per_row) - scroller.vars.elementMargin );
@@ -46,110 +45,103 @@
 
         // Scroller methods
         scroller.calculateVisibleElements = function() {
-            visible_els = Math.floor((wrapper.width() + scroller.vars.elementMargin) / el_width);
+            scroller.visible_els = Math.floor((wrapper.width() + scroller.vars.elementMargin) / el_width);
         };
 
-        scroller.moveElements = function(direction, scrollBy, page_el) {
-            if(!scroller.animating) {
-                scroller.animating = true;
-                var distance = 0;
-                if (typeof scrollBy === 'undefined') {
-                    distance = visible_els * el_width;
-                } else { distance = visible_els * el_width * scrollBy; }
+        scroller.moveElements = function(scrollBy) {
+            if (!scroller.animating) {
+                if (typeof scrollBy === 'undefined')
+                    scrollBy = 1;
 
-                var fraction = 0;
-                if (direction === 'left') { fraction = -distance ;
-                } else { fraction = distance; }
+                var new_current_page = scroller.current_page + scrollBy;
+                // The requested page should be between 0 and total number of pages and should not be the same page
+                // as the current, otherwise do nothing
+                if (new_current_page >= 0 && new_current_page < scroller.total_pages &&
+                    new_current_page !== scroller.current_page) {
+                    scroller.animating = true;
 
-                wrapper.animate(
-                    { scrollLeft: wrapper.scrollLeft() + fraction },
-                    scroller.vars.animateDuration, scroller.vars.easingType,
-                    function() { scroller.animating = false; }
-                );
+                    wrapper.animate(
+                        { scrollLeft: wrapper.scrollLeft() + scroller.visible_els * el_width * scrollBy },
+                        scroller.vars.animateDuration, scroller.vars.easingType,
+                        function() { scroller.animating = false; }
+                    );
 
-                if (scroller.vars.addPagination) {
-                    wrapper.current_page.removeClass('current-page');
-                    if (typeof page_el === 'undefined') {
-                        if (direction === 'right') {
-                            if (wrapper.current_page.next().size() > 0)
-                                wrapper.current_page = wrapper.current_page.next();
-                        }
-                        else {
-                            if (wrapper.current_page.prev().size() > 0)
-                                wrapper.current_page = wrapper.current_page.prev();
-                        }
-                    } else {
-                        wrapper.current_page = page_el;
-                    }
-                    wrapper.current_page.addClass('current-page');
+                    scroller.current_page = new_current_page;
+
+                    if (scroller.vars.addPagination)
+                        scroller.assignActivePage(true);
                 }
             }
         };
 
-        scroller.createPagination = function() {
+        scroller.initializePagination = function() {
             // If there is the same number of visible elements we don't have to change anything
-            if (typeof this.visible_els === 'undefined' || this.visible_els !== visible_els) {
-                this.visible_els = visible_els;
-                var pages = Math.ceil(per_row / visible_els);
-                if (outer_wrapper.find('.radiant-pagination').size() > 0)
-                    outer_wrapper.find('.radiant-pagination').remove();
+            if (typeof scroller.old_visible_els === 'undefined' || scroller.old_visible_els !== scroller.visible_els) {
+                scroller.old_visible_els = scroller.visible_els;
+                scroller.total_pages = Math.ceil(per_row / scroller.visible_els);
 
-                var pagination = $('<div class="radiant-pagination" />').insertAfter(wrapper);
-                for (var i = 0; i < pages; i++) {
-                    pagination.append('<div class="radiant-page" data-page="' + (i + 1) + '"></div>');
-                }
-
-                if (typeof wrapper.current_page === 'undefined') {
+                if (typeof scroller.current_page === 'undefined') {
                     // If current page was not set previously, we set it now
-                    wrapper.current_page = pagination.find('.radiant-page').first();
+                    scroller.current_page = 0;
                 } else {
-                    var new_current_page = Math.ceil(wrapper.scrollLeft() / (visible_els * el_width));
-                    wrapper.current_page = $(pagination.find('.radiant-page').get(new_current_page));
+                    scroller.current_page = Math.ceil(wrapper.scrollLeft() / (scroller.visible_els * el_width));
                 }
-                wrapper.current_page.addClass('current-page');
+
+                if (scroller.vars.addPagination)
+                    scroller.drawPagination();
             }
+        };
+
+        scroller.drawPagination = function() {
+            if (outer_wrapper.find('.radiant-pagination').size() > 0)
+                outer_wrapper.find('.radiant-pagination').remove();
+
+            var pagination = $('<div class="radiant-pagination" />').insertAfter(wrapper);
+            for (var i = 0; i < scroller.total_pages; i++) {
+                pagination.append('<div class="radiant-page" data-page="' + i + '" />');
+            }
+            scroller.assignActivePage();
+        };
+
+        scroller.assignActivePage = function(remove_old_active) {
+            if (remove_old_active === true)
+                outer_wrapper.find('.current-page').removeClass('current-page');
+            $(outer_wrapper.find('.radiant-page').get(scroller.current_page)).addClass('current-page');
         };
 
         // Binding events
         $(window).bindWithDelay('resize', function() {
             scroller.calculateVisibleElements();
-            if (scroller.vars.addPagination) {
-                scroller.createPagination();
-            }
+            scroller.initializePagination();
         }, 500, true);
 
         nav.on('click', '.radiant-next', function() {
-            scroller.moveElements('right', 1);
+            scroller.moveElements(1);
         });
 
         nav.on('click', '.radiant-prev', function() {
-            scroller.moveElements('left', 1);
+            scroller.moveElements(-1);
         });
 
         if (scroller.vars.useMouseWheel) {
             wrapper.on('mousewheel', function(event) {
                 event.preventDefault();
-                if (event.deltaY > 0) { scroller.moveElements('right'); } else {
-                    scroller.moveElements('left'); }
+                scroller.moveElements(event.deltaY);
             });
         }
 
         outer_wrapper.on('click', '.radiant-page', function() {
-            var $this = $(this);
-            if (wrapper.current_page.get(0) !== $this.get(0)) {
-                var current_page_number = wrapper.current_page.data('page');
-                var this_page_number = $this.data('page');
-                if (current_page_number > this_page_number) {
-                    scroller.moveElements('left', current_page_number - this_page_number, $this);
-                } else { scroller.moveElements('right', this_page_number - current_page_number, $this); }
+            var this_page = $(this).data('page');
+            // If not clicking on the same page
+            if (scroller.current_page !== this_page) {
+                var current_page_number = scroller.current_page;
+                scroller.moveElements(this_page - current_page_number);
             }
         });
 
         // Init scroller
         scroller.calculateVisibleElements();
-        if (scroller.vars.addPagination) {
-            scroller.createPagination();
-        }
+        scroller.initializePagination();
     };
 
     $.radiantScroller.defaults = {
@@ -165,7 +157,7 @@
         prevButtonText: ''
     };
 
-    $.fn.radiantScroller = function(options) {
+    $.fn.radiantScroller = function(options, options2) {
         if (options === undefined) options = {};
 
         if (typeof options === "object") {
@@ -173,8 +165,14 @@
         } else {
             var $scroller = $(this).data('radiantscroller');
             switch (options) {
-                case "next": $scroller.moveElements('right'); break;
-                case "prev": $scroller.moveElements('left'); break;
+                case "next": $scroller.moveElements(1); break;
+                case "prev": $scroller.moveElements(-1); break;
+                // radiantScroller('by', 2) - scroll by 2 pages, not to the 2nd page
+                //TODO: check number
+                case "by": if (typeof options2 === "number") $scroller.moveElements(options2); break;
+                // Default behaviour: radiantScroller(3) means go to 3 page and page numeration starts from 1
+                // (whereas plugin has numeration starting from 0, so have to substract 1!!!)
+                default: if (typeof options === "number") $scroller.moveElements(options - 1 - $scroller.current_page);
             }
         }
 
