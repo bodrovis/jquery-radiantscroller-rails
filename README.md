@@ -50,4 +50,4 @@ And in your `application.css` you will need to add this line:
 
 This plugin is licensed under the [MIT License](https://github.com/bodrovis/jquery-radiantscroller-rails/blob/master/LICENSE.txt).
 
-Copyright (c) 2013 [Ilya Bodrov](http://radiant-wind.com)
+Copyright (c) 2014 [Ilya Bodrov](http://radiant-wind.com)
