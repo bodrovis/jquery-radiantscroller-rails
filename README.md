@@ -1,5 +1,7 @@
 # RadiamtScroller plugin for Rails
 
+[![Gem Version](https://badge.fury.io/rb/jquery-radiantscroller-rails.png)](http://badge.fury.io/rb/jquery-radiantscroller-rails)
+
 A ruby gem that uses the Rails asset pipeline to include the Radiant Scroller plugin by Ilya Bodrov
  (http://radiant-wind.com):
 
