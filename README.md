@@ -1,4 +1,4 @@
-# RadiamtScroller plugin for Rails
+# RadiantScroller plugin for Rails
 
 [![Gem Version](https://badge.fury.io/rb/jquery-radiantscroller-rails.png)](http://badge.fury.io/rb/jquery-radiantscroller-rails)
 
