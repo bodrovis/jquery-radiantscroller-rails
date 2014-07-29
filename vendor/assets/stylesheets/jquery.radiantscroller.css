@@ -1,48 +1,62 @@
 /*!
  * jQuery RadiantScroller
- * Version: 0.0.5 (28/07/2014)
+ * Version: 0.1.0 (29/07/2014)
  * Copyright (c) 2014 Ilya Bodrov (http://www.radiant-wind.com/plugins/radiant_scroller)
  */
 
 /* ======== Scroller and elements ======== */
 .radiant_scroller {
-    position: relative;
+  position: relative;
 }
 
 .radiant_scroller_wrapper {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .radiant_scroller_wrapper .scroller-el {
-    display: block;
-    float: left;
+  display: block;
+  float: left;
+  position: relative;
 }
 
 .radiant_scroller .radiant_scroller_row .scroller-el:last-of-type {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .radiant_scroller .radiant_scroller_row:last-of-type .scroller-el {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 /* ======== Navigatonal buttons (previous/next) ======== */
 .radiant_scroller .radiant-navigation {
-    clear: both;
+  clear: both;
 }
 
 .radiant_scroller .radiant-next, .radiant_scroller .radiant-prev {
-    position: absolute;
-    cursor: pointer;
+  position: absolute;
+  cursor: pointer;
 }
 
 /* ======== Pagination ======== */
 .radiant_scroller .radiant-pagination .radiant-page {
-    display: inline-block;
-    margin-right: 10px;
-    cursor: pointer;
+  display: inline-block;
+  margin-right: 10px;
+  cursor: pointer;
 }
 
 .radiant_scroller .radiant-pagination .radiant-page:last-of-type {
-    margin-right: 0;
+  margin-right: 0;
+}
+
+/* ======== Captions ======== */
+.radiant_scroller .radiant-caption {
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  color: #fff;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  display: none;
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABVJREFUeNpiYWBgaABiBiYGKAAIMAAHbACHQpFYbQAAAABJRU5ErkJggg==') repeat;
 }

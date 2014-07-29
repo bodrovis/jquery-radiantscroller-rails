@@ -1,6 +1,6 @@
 /*!
  * jQuery RadiantScroller
- * Version: 0.0.5 (28/07/2014)
+ * Version: 0.1.0 (29/07/2014)
  * Copyright (c) 2014 Ilya Bodrov (http://www.radiant-wind.com/plugins/radiant_scroller)
  *
  * Requires: jQuery 1.7.0+
@@ -26,8 +26,9 @@
     scroller.width( (el_width * per_row) - scroller.vars.elementMargin );
 
     // Grouping elements by rows
-    do $(elements.slice(0, per_row)).wrapAll('<div class="radiant_scroller_row" />');
-    while((elements = elements.slice(per_row)).length > 0);
+    var elements_tmp = elements;
+    do $(elements_tmp.slice(0, per_row)).wrapAll('<div class="radiant_scroller_row" />');
+    while((elements_tmp = elements_tmp.slice(per_row)).length > 0);
 
     // Wrapper with hidden scrollbars
     scroller.wrap('<div class="radiant_scroller"></div>').wrap('<div class="radiant_scroller_wrapper" />');
@@ -64,6 +65,9 @@
             new_current_page !== scroller.current_page) {
           scroller.animating = true;
 
+          if (duration !== 0)
+            scroller.vars.beforeMove(scroller); // Callback telling moving animation is started
+
           wrapper.animate(
               { scrollLeft: wrapper.scrollLeft() + scroller.visible_els * el_width * scrollBy },
               duration, scroller.vars.easingType,
@@ -74,6 +78,15 @@
 
           if (scroller.vars.addPagination)
             scroller.assignActivePage(true);
+
+          if (duration !== 0) {
+            // Callback telling moving animation is finished
+            scroller.vars.afterMove(scroller);
+
+            if (new_current_page + 1 === scroller.total_pages)
+            // Callback telling moving animation is finished
+              scroller.vars.lastPageReached(scroller);
+          }
         }
       }
     };
@@ -113,6 +126,42 @@
       $(outer_wrapper.find('.radiant-page').get(scroller.current_page)).addClass('current-page');
     };
 
+    // Captions are added by assigning `title` attribute to imgs like
+    // <img src="test.jpg" title="My caption" />
+    scroller.addCaptions = function() {
+      var child_img, child_img_title;
+
+      elements.each(function() {
+        child_img = $(this).find('img');
+        child_img_title = $.trim(child_img.attr('title'));
+
+        if (typeof child_img_title !== 'undefined' && child_img_title !== '') {
+          child_img.attr('title', '');
+          $(this).append('<div class="radiant-caption">' +
+              child_img_title + '</div>');
+        }
+      });
+
+      var slide_animation_opts = {
+        duration: scroller.vars.captionsAnimateDuration,
+        easing: scroller.vars.captionsAnimateEasingType
+      };
+
+      scroller.on('mouseenter', '.scroller-el', function() {
+        var caption = $(this).find('.radiant-caption');
+        if (caption.size() > 0 && !caption.is(':visible')) {
+          caption.slideDown(slide_animation_opts, scroller.vars.afterShowingCaption(caption));
+        }
+      });
+
+      scroller.on('mouseleave', '.scroller-el', function() {
+        var caption = $(this).find('.radiant-caption');
+        if (caption.size() > 0 && caption.is(':visible')) {
+          caption.slideUp(slide_animation_opts, scroller.vars.afterHidingCaption(caption));
+        }
+      });
+    };
+
     // Binding events
     $(window).bindWithDelay('resize', function() {
       scroller.calculateVisibleElements();
@@ -148,11 +197,18 @@
     // Init scroller
     scroller.calculateVisibleElements();
     scroller.initializePagination();
+    if (scroller.vars.useCaptions) {
+      scroller.addCaptions();
+    }
+
+    scroller.vars.loaded(scroller); // Fire callback telling the scroller is loaded
   };
 
   $.radiantScroller.defaults = {
     addPagination: false,
     animateDuration: 700,
+    captionsAnimateDuration: 400,
+    captionsAnimateEasingType: 'swing',
     cols: 2,
     delayDuration: 500,
     easingType: 'swing',
@@ -161,7 +217,15 @@
     nextButtonText: '',
     prevButtonText: '',
     rows: 2,
-    useMouseWheel: false
+    useCaptions: false,
+    useMouseWheel: false,
+    // Callbacks
+    loaded: function() {}, // Called when the scroller is loaded and ready
+    beforeMove: function() {}, // Called before each scroller moving animation
+    afterMove: function() {}, // Called after each scroller moving animation is finished
+    lastPageReached: function() {}, // Called when the last page of the scroller is reached
+    afterHidingCaption: function() {}, // Called after the caption was hidden
+    afterShowingCaption: function() {} // Called after the caption was showed
   };
 
   $.fn.radiantScroller = function(options, options2) {
