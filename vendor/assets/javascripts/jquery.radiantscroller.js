@@ -1,6 +1,6 @@
 /*!
  * jQuery RadiantScroller
- * Version: 0.1.0 (29/07/2014)
+ * Version: 0.1.1 (05/12/2014)
  * Copyright (c) 2014 Ilya Bodrov (http://www.radiant-wind.com/plugins/radiant_scroller)
  *
  * Requires: jQuery 1.7.0+
@@ -138,7 +138,7 @@
         if (typeof child_img_title !== 'undefined' && child_img_title !== '') {
           child_img.attr('title', '');
           $(this).append('<div class="radiant-caption">' +
-              child_img_title + '</div>');
+          child_img_title + '</div>');
         }
       });
 

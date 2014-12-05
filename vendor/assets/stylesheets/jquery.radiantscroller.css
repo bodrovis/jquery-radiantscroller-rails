@@ -1,6 +1,6 @@
 /*!
  * jQuery RadiantScroller
- * Version: 0.1.0 (29/07/2014)
+ * Version: 0.1.1 (05/12/2014)
  * Copyright (c) 2014 Ilya Bodrov (http://www.radiant-wind.com/plugins/radiant_scroller)
  */
 
@@ -58,5 +58,5 @@
   padding-top: 5px;
   padding-bottom: 5px;
   display: none;
-  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABVJREFUeNpiYWBgaABiBiYGKAAIMAAHbACHQpFYbQAAAABJRU5ErkJggg==') repeat;
+  background-color: rgba(44,44,44,0.5);
 }
