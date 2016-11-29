@@ -2,8 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/jquery-radiantscroller-rails.png)](http://badge.fury.io/rb/jquery-radiantscroller-rails)
 
-A ruby gem that uses the Rails asset pipeline to include the Radiant Scroller plugin by Ilya Bodrov
- (http://radiant-wind.com):
+A ruby gem that uses the Rails asset pipeline to include the Radiant Scroller plugin by Ilya Bodrov:
 
 * Homepage: https://github.com/bodrovis/RadiantScroller
 
@@ -52,4 +51,4 @@ And in your `application.css` you will need to add this line:
 
 This plugin is licensed under the [MIT License](https://github.com/bodrovis/jquery-radiantscroller-rails/blob/master/LICENSE.txt).
 
-Copyright (c) 2014 [Ilya Bodrov](http://radiant-wind.com)
+Copyright (c) 2016 [Ilya Bodrov](http://bodrovis.tech)
